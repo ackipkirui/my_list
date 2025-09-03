@@ -1,0 +1,24 @@
+try:
+    # ask for file name
+    name = input("Enter file name: ")
+
+    # read file
+    f = open(name, "r")
+    data = f.read()
+    f.close()
+
+    # change data (example: uppercase)
+    new_data = data.upper()
+
+    # write to new file
+    new_name = "new_" + name
+    f = open(new_name, "w")
+    f.write(new_data)
+    f.close()
+
+    print("Done! File saved as", new_name)
+
+except FileNotFoundError:
+    print("File not found.")
+except:
+    print("Something went wrong.")
