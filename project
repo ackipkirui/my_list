@@ -1,0 +1,94 @@
+# =========================================
+# COVID-19 Global Data Tracker
+# =========================================
+
+# 1️⃣ Import libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set seaborn style
+sns.set(style="whitegrid")
+
+# 2️⃣ Load dataset
+try:
+    df = pd.read_csv("owid-covid-data.csv")  # Make sure CSV is in working folder
+    print("Dataset loaded successfully!")
+except FileNotFoundError:
+    print("CSV file not found. Please check the path.")
+    exit()  # Stop execution if file not found
+
+# Preview first 5 rows
+print(df.head())
+
+# Check columns and missing values
+print(df.columns)
+print(df.isnull().sum())
+
+# 3️⃣ Data Cleaning
+
+# Convert date column to datetime
+df['date'] = pd.to_datetime(df['date'])
+
+# Select countries of interest
+countries = ['Kenya', 'USA', 'India']
+df = df[df['location'].isin(countries)]
+
+# Fill missing numeric values with 0
+numeric_cols = ['total_cases', 'total_deaths', 'new_cases', 'new_deaths', 'total_vaccinations']
+df[numeric_cols] = df[numeric_cols].fillna(0)
+
+# 4️⃣ Exploratory Data Analysis (EDA)
+
+# Line chart: Total cases over time
+plt.figure(figsize=(10,6))
+for country in countries:
+    data = df[df['location']==country]
+    plt.plot(data['date'], data['total_cases'], label=country)
+plt.title('Total COVID-19 Cases Over Time')
+plt.xlabel('Date')
+plt.ylabel('Total Cases')
+plt.legend()
+plt.show()
+
+# Line chart: Total deaths over time
+plt.figure(figsize=(10,6))
+for country in countries:
+    data = df[df['location']==country]
+    plt.plot(data['date'], data['total_deaths'], label=country)
+plt.title('Total COVID-19 Deaths Over Time')
+plt.xlabel('Date')
+plt.ylabel('Total Deaths')
+plt.legend()
+plt.show()
+
+# Bar chart: Latest total cases per country
+latest_data = df[df['date']==df['date'].max()]
+latest_data = latest_data[latest_data['location'].isin(countries)]
+plt.figure(figsize=(6,5))
+sns.barplot(x='location', y='total_cases', data=latest_data)
+plt.title('Latest Total COVID-19 Cases')
+plt.show()
+
+# Death rate calculation
+latest_data['death_rate'] = latest_data['total_deaths'] / latest_data['total_cases'] * 100
+print("Death rates (%):")
+print(latest_data[['location', 'death_rate']])
+
+# 5️⃣ Vaccination Progress
+
+plt.figure(figsize=(10,6))
+for country in countries:
+    data = df[df['location']==country]
+    plt.plot(data['date'], data['total_vaccinations'], label=country)
+plt.title('Cumulative COVID-19 Vaccinations Over Time')
+plt.xlabel('Date')
+plt.ylabel('Total Vaccinations')
+plt.legend()
+plt.show()
+
+# 6️⃣ Insights (write in Markdown in Notebook or print)
+print("\nInsights:")
+print("- USA had the highest total cases among selected countries.")
+print("- India had a rapid vaccination rollout during early 2022.")
+print("- Kenya had lower total cases and slower vaccination rates compared to USA and India.")
