@@ -1,0 +1,31 @@
+# Base class
+class Device:
+    def __init__(self, brand, model):
+        self.brand = brand
+        self.model = model
+
+    def info(self):
+        print(f"Device: {self.brand} {self.model}")
+
+# Inherited class
+class Smartphone(Device):
+    def __init__(self, brand, model, storage, camera):
+        super().__init__(brand, model)
+        self.storage = storage
+        self.camera = camera
+
+    def take_photo(self):
+        print(f"{self.brand} {self.model} is taking a photo with {self.camera}MP camera!")
+
+    def upgrade_storage(self, new_storage):
+        self.storage = new_storage
+        print(f"Storage upgraded to {self.storage}GB")
+
+# Create objects
+phone1 = Smartphone("Samsung", "Galaxy S24", 256, 108)
+phone2 = Smartphone("Apple", "iPhone 15", 512, 48)
+
+# Use methods
+phone1.info()
+phone1.take_photo()
+phone2.upgrade_storage(1024)
